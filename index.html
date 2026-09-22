@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مغادرة طالب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-1:#eef2fb;
+    --bg-2:#f7f4ec;
+    --ink:#1e2433;
+    --muted:#6b7280;
+    --panel:#ffffff;
+    --line:#e7e6df;
+    --accent:#2e8b57;
+    --accent-soft:#e9f7ee;
+    --shadow: 0 10px 30px rgba(30,36,51,.08);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family:'Cairo',sans-serif;
+    background:
+      radial-gradient(1100px 600px at 85% -10%, #e4ecff 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, #fdf3e6 0%, transparent 55%),
+      var(--bg-2);
+    color:var(--ink);
+    padding:36px 20px 60px;
+  }
+  .wrap{max-width:1280px;margin:0 auto;}
+  header{margin-bottom:28px;}
+  header .eyebrow{
+    color:var(--accent); font-weight:700; font-size:14px; letter-spacing:.2px;
+  }
+  header h1{
+    margin:6px 0 8px; font-size:clamp(24px,3vw,32px); font-weight:900;
+  }
+  header p{color:var(--muted); margin:0; max-width:620px; line-height:1.7; font-size:15px;}
+
+  .layout{
+    display:grid;
+    grid-template-columns: 420px 1fr;
+    gap:28px;
+    align-items:start;
+  }
+  @media (max-width: 920px){
+    .layout{grid-template-columns:1fr;}
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:22px;
+  }
+  .panel h2{
+    font-size:16px; margin:0 0 16px; font-weight:800;
+    display:flex; align-items:center; gap:8px;
+  }
+  .panel h2::before{
+    content:""; width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block;
+  }
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:6px;
+  }
+  .field .hint{font-size:11.5px; color:var(--muted); margin-top:5px; line-height:1.5;}
+  input[type=text], input[type=time], select{
+    width:100%; border:1.5px solid var(--line); border-radius:10px;
+    padding:10px 12px; font-family:'Cairo',sans-serif; font-size:14px;
+    background:#fbfbf9; color:var(--ink); transition:border-color .15s, background .15s;
+  }
+  input[type=text]:focus, input[type=time]:focus, select:focus{
+    outline:none; border-color:var(--accent); background:#fff;
+  }
+  input[readonly]{ background:#f1f0ea; color:var(--muted); }
+
+  .file-drop{
+    border:1.5px dashed var(--line); border-radius:10px; padding:14px;
+    background:#fbfbf9; text-align:center; cursor:pointer; transition:.15s;
+  }
+  .file-drop:hover{border-color:var(--accent); background:#fff;}
+  .file-drop input{display:none;}
+  .sig-preview{
+    margin-top:10px; max-width:100%; max-height:90px; display:none;
+    border:1px solid var(--line); border-radius:8px; padding:6px; background:#fff;
+  }
+  .sig-actions{margin-top:8px; display:none;}
+  .sig-actions button{
+    background:none; border:none; color:var(--accent); font-family:'Cairo'; font-weight:700;
+    font-size:12.5px; cursor:pointer; padding:0;
+  }
+
+  .btn{
+    width:100%; border:none; border-radius:12px; padding:13px 16px;
+    font-family:'Cairo',sans-serif; font-weight:800; font-size:15px;
+    cursor:pointer; transition:transform .1s, box-shadow .15s; margin-top:4px;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn-primary{ background:var(--ink); color:#fff; }
+  .btn-primary:hover{box-shadow:0 6px 16px rgba(30,36,51,.25);}
+  .btn-download{
+    background:var(--accent); color:#fff; margin-top:14px;
+  }
+  .btn-download:hover{box-shadow:0 6px 16px rgba(46,139,87,.3);}
+
+  .preview-col{position:sticky; top:24px;}
+  .canvas-shell{
+    background:var(--panel); border:1px solid var(--line); border-radius:18px;
+    box-shadow:var(--shadow); padding:18px; display:flex; flex-direction:column; align-items:center; gap:14px;
+  }
+  canvas{
+    width:100%; max-width:1000px; height:auto; border-radius:10px;
+    border:1px solid var(--line);
+  }
+  .meta-row{
+    width:100%; display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; color:var(--muted);
+  }
+  .dims-badge{
+    background:#f2f1ea; border:1px solid var(--line); border-radius:999px;
+    padding:4px 12px; font-weight:700; color:var(--ink); font-size:12px;
+  }  .sig-mode-toggle{
+    display:flex; gap:8px; margin-top:4px;
+  }
+  .sig-mode-btn{
+    flex:1; border:1.5px solid var(--line); background:#fbfbf9; color:var(--muted);
+    border-radius:10px; padding:9px 10px; font-family:'Cairo',sans-serif; font-weight:700;
+    font-size:13px; cursor:pointer; transition:.15s;
+  }
+  .sig-mode-btn:hover{border-color:var(--accent);}
+  .sig-mode-btn.active{
+    background:var(--accent-soft); border-color:var(--accent); color:var(--accent);
+  }
+  #sigCanvas{
+    width:100%; height:160px; border:1.5px dashed var(--line); border-radius:10px;
+    background:#fbfbf9; touch-action:none; cursor:crosshair; display:block;
+  }
+  #sigCanvas:hover{border-color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">أداة إعداد التصاريح</div>
+    <h1>مغادرة طالب</h1>
+    <p>عبّئ البيانات المطلوبة فقط — أي خانة تتركها فارغة لن تظهر في التصميم. الترتيب والتنسيق ثابتان دائمًا. الصورة تُنشأ بمقاس 1080×1920.</p>
+  </header>
+
+  <div class="layout">
+    <!-- FORM PANEL -->
+    <div class="panel">
+      <h2>بيانات الطالب</h2>
+      <div class="field">
+        <label for="studentName">اسم الطالب</label>
+        <input type="text" id="studentName" placeholder="مثال: عبدالله محمد">
+      </div>
+
+      <h2 style="margin-top:22px;">وقت الخروج</h2>
+      <div class="field">
+        <label for="exitTime">الوقت (قابل للتعديل)</label>
+        <input type="time" id="exitTime">
+      </div>
+      <div class="field">
+        <label>التاريخ واليوم</label>
+        <input type="text" id="autoDateDisplay" readonly>
+        <div class="hint">يُزامَن تلقائيًا مع تاريخ اليوم الحالي، ولا يمكن تعديله.</div>
+      </div>
+
+      <h2 style="margin-top:22px;">سبب الخروج</h2>
+      <div class="field">
+        <select id="reasonSelect">
+          <option value="">— بدون —</option>
+          <option value="حالة صحية طارئة">حالة صحية طارئة</option>
+          <option value="حالة مرضية">حالة مرضية</option>
+          <option value="مراجعة المستشفى/المركز الصحي">مراجعة المستشفى/المركز الصحي</option>
+          <option value="مراجعة الجهات الرسمية">مراجعة الجهات الرسمية</option>
+          <option value="مرافقة أحد الأقارب">مرافقة أحد الأقارب</option>
+          <option value="وفاة أحد الأقارب">وفاة أحد الأقارب</option>
+          <option value="ظرف أسري طارئ">ظرف أسري طارئ</option>
+        </select>
+      </div>
+
+      <h2 style="margin-top:22px;">مرافق الطالب</h2>
+      <div class="field">
+        <select id="companionSelect">
+          <option value="">— بدون —</option>
+          <option value="الأب">الأب</option>
+          <option value="الأم">الأم</option>
+          <option value="الأخ">الأخ</option>
+          <option value="الأخت">الأخت</option>
+          <option value="الخال">الخال</option>
+          <option value="العم">العم</option>
+          <option value="معلم في المدرسة">معلم في المدرسة</option>
+          <option value="إداري في المدرسة">إداري في المدرسة</option>
+          <option value="السائق">السائق</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="companionId">رقم هوية المرافق</label>
+        <input type="text" id="companionId" placeholder="مثال: 1234567890">
+      </div>
+
+      <h2 style="margin-top:22px;">مصدر الإذن</h2>
+      <div class="field">
+        <select id="sourceSelect">
+          <option value="">— بدون —</option>
+          <option value="المدير">المدير</option>
+          <option value="الوكيل">الوكيل</option>
+          <option value="المرشد الطلابي">المرشد الطلابي</option>
+          <option value="المعلم المشرف">المعلم المشرف</option>
+          <option value="الإداري المسؤول">الإداري المسؤول</option>
+        </select>
+      </div>
+
+      <h2 style="margin-top:22px;">التوقيع</h2>
+      <div class="field">
+        <div class="sig-mode-toggle" id="sigModeToggle">
+          <button type="button" class="sig-mode-btn active" data-mode="upload">رفع صورة</button>
+          <button type="button" class="sig-mode-btn" data-mode="draw">توقيع باليد</button>
+        </div>
+      </div>
+
+      <div class="field" id="sigUploadPanel">
+        <div class="file-drop" id="sigDrop">
+          <span id="sigDropLabel">اضغط لرفع صورة التوقيع</span>
+          <input type="file" id="sigInput" accept="image/*">
+        </div>
+        <img id="sigPreview" class="sig-preview">
+        <div class="sig-actions" id="sigActions"><button id="sigRemove" type="button">إزالة الصورة</button></div>
+      </div>
+
+      <div class="field" id="sigDrawPanel" style="display:none;">
+        <canvas id="sigCanvas" width="440" height="160"></canvas>
+        <div class="hint">ارسم توقيعك بالفأرة أو بإصبعك على الشاشة.</div>
+        <div class="sig-actions" style="display:block; margin-top:8px;"><button id="sigClearBtn" type="button">مسح التوقيع</button></div>
+      </div>
+
+      <button class="btn btn-primary" id="generateBtn" style="margin-top:22px;">إنشاء الصورة</button>
+      <button class="btn btn-download" id="downloadBtn">تنزيل الصورة PNG</button>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="preview-col">
+      <div class="canvas-shell">
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+        <div class="meta-row">
+          <span>معاينة مباشرة</span>
+          <span class="dims-badge" dir="ltr">1080 × 1920</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- Canvas setup ----------
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function roundRect(ctx,x,y,w,h,r){
+  if (typeof r === 'number') r = {tl:r,tr:r,br:r,bl:r};
+  ctx.beginPath();
+  ctx.moveTo(x+r.tl,y);
+  ctx.lineTo(x+w-r.tr,y);
+  ctx.arcTo(x+w,y,x+w,y+r.tr,r.tr);
+  ctx.lineTo(x+w,y+h-r.br);
+  ctx.arcTo(x+w,y+h,x+w-r.br,y+h,r.br);
+  ctx.lineTo(x+r.bl,y+h);
+  ctx.arcTo(x,y+h,x,y+h-r.bl,r.bl);
+  ctx.lineTo(x,y+r.tl);
+  ctx.arcTo(x,y,x+r.tl,y,r.tl);
+  ctx.closePath();
+}
+
+function fitFontSize(text, maxWidth, weight, startSize, minSize){
+  let size = startSize;
+  ctx.font = `${weight} ${size}px Cairo`;
+  while (ctx.measureText(text).width > maxWidth && size > minSize){
+    size -= 1;
+    ctx.font = `${weight} ${size}px Cairo`;
+  }
+  return size;
+}
+
+// ---------- Auto-synced date (never editable) ----------
+const autoDateEl = document.getElementById('autoDateDisplay');
+function getTodayInfo(){
+  const d = new Date();
+  const dateDisplay = d.toLocaleDateString('ar-SA-u-ca-gregory', { year:'numeric', month:'long', day:'numeric' });
+  const weekday = d.toLocaleDateString('ar-SA-u-ca-gregory', { weekday:'long' });
+  return { dateDisplay, weekday };
+}
+function refreshAutoDateField(){
+  const { dateDisplay, weekday } = getTodayInfo();
+  autoDateEl.value = `${weekday} — ${dateDisplay}`;
+}
+refreshAutoDateField();
+
+// ---------- Signature upload ----------
+let signatureImg = null;
+const sigInput = document.getElementById('sigInput');
+const sigDrop = document.getElementById('sigDrop');
+const sigDropLabel = document.getElementById('sigDropLabel');
+const sigPreview = document.getElementById('sigPreview');
+const sigActions = document.getElementById('sigActions');
+
+sigDrop.addEventListener('click', () => sigInput.click());
+sigInput.addEventListener('change', () => {
+  const file = sigInput.files && sigInput.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      signatureImg = img;
+      sigPreview.src = e.target.result;
+      sigPreview.style.display = 'block';
+      sigDropLabel.textContent = 'تم رفع صورة التوقيع (اضغط لتغييرها)';
+      sigActions.style.display = 'block';
+      render();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('sigRemove').addEventListener('click', (e) => {
+  e.stopPropagation();
+  signatureImg = null;
+  sigInput.value = '';
+  sigPreview.style.display = 'none';
+  sigActions.style.display = 'none';
+  sigDropLabel.textContent = 'اضغط لرفع صورة التوقيع';
+  render();
+});
+
+// ---------- Signature mode toggle (upload vs hand-drawn) ----------
+const sigUploadPanel = document.getElementById('sigUploadPanel');
+const sigDrawPanel = document.getElementById('sigDrawPanel');
+document.querySelectorAll('.sig-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sig-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    sigUploadPanel.style.display = mode === 'upload' ? 'block' : 'none';
+    sigDrawPanel.style.display = mode === 'draw' ? 'block' : 'none';
+  });
+});
+
+// ---------- Hand-drawn signature pad ----------
+const sigCanvas = document.getElementById('sigCanvas');
+const sigCtx = sigCanvas.getContext('2d');
+let drawing = false;
+let lastX = 0, lastY = 0;
+let hasDrawnStroke = false;
+
+function canvasPointFromEvent(e){
+  const r = sigCanvas.getBoundingClientRect();
+  const scaleX = sigCanvas.width / r.width;
+  const scaleY = sigCanvas.height / r.height;
+  return { x: (e.clientX - r.left) * scaleX, y: (e.clientY - r.top) * scaleY };
+}
+
+sigCanvas.addEventListener('pointerdown', (e) => {
+  drawing = true;
+  hasDrawnStroke = true;
+  const p = canvasPointFromEvent(e);
+  lastX = p.x; lastY = p.y;
+  sigCanvas.setPointerCapture(e.pointerId);
+  // draw a dot for a simple click/tap
+  sigCtx.fillStyle = '#000';
+  sigCtx.beginPath();
+  sigCtx.arc(p.x, p.y, 1.6, 0, Math.PI*2);
+  sigCtx.fill();
+});
+sigCanvas.addEventListener('pointermove', (e) => {
+  if (!drawing) return;
+  const p = canvasPointFromEvent(e);
+  sigCtx.strokeStyle = '#000';
+  sigCtx.lineWidth = 3;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  sigCtx.beginPath();
+  sigCtx.moveTo(lastX, lastY);
+  sigCtx.lineTo(p.x, p.y);
+  sigCtx.stroke();
+  lastX = p.x; lastY = p.y;
+});
+function endStroke(){
+  if (!drawing) return;
+  drawing = false;
+  if (hasDrawnStroke){
+    const img = new Image();
+    img.onload = () => { signatureImg = img; render(); };
+    img.src = sigCanvas.toDataURL('image/png');
+  }
+}
+sigCanvas.addEventListener('pointerup', endStroke);
+sigCanvas.addEventListener('pointerleave', endStroke);
+
+document.getElementById('sigClearBtn').addEventListener('click', () => {
+  sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  hasDrawnStroke = false;
+  signatureImg = null;
+  render();
+});
+
+// ---------- Data collection ----------
+function collectData(){
+  const studentName = document.getElementById('studentName').value.trim();
+  const timeVal = document.getElementById('exitTime').value;
+  let timeDisplay = '';
+  if (timeVal){
+    const [hh, mm] = timeVal.split(':').map(Number);
+    const t = new Date();
+    t.setHours(hh, mm, 0, 0);
+    timeDisplay = t.toLocaleTimeString('ar-SA-u-ca-gregory', { hour:'2-digit', minute:'2-digit' });
+  }
+  const { dateDisplay, weekday } = getTodayInfo();
+  const reason = document.getElementById('reasonSelect').value;
+  const companion = document.getElementById('companionSelect').value;
+  const companionId = document.getElementById('companionId').value.trim();
+  const source = document.getElementById('sourceSelect').value;
+  return { studentName, timeDisplay, dateDisplay, weekday, reason, companion, companionId, source };
+}
+
+// ---------- Render ----------
+function render(){
+  ctx.direction = 'rtl';
+  const W = 1080, H = 1920;
+
+  // plain white background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0,0,W,H);
+
+  const data = collectData();
+  const { studentName, timeDisplay, dateDisplay, weekday, reason, companion, companionId, source } = data;
+
+  const black = '#000000';
+  const labelColor = '#000000';
+  const lineColor = '#e2e2e2';
+
+  const outerX = 50, outerY = 50, outerW = W - outerX*2, outerH = H - outerY*2;
+  const gap = 20;
+  const bandH = (outerH - gap*3) / 4;
+  const contentX = outerX + 28;
+  const contentW = outerW - 56;
+
+  const band1Y = outerY;
+  const band2Y = band1Y + bandH + gap;
+  const band3Y = band2Y + bandH + gap;
+  const band4Y = band3Y + bandH + gap;
+
+  // =========================================================
+  // Quarter 1 — fixed green banner (always shown)
+  // =========================================================
+  const bannerInset = 6;
+  roundRect(ctx, contentX, band1Y + bannerInset, contentW, bandH - bannerInset*2, 22);
+  ctx.fillStyle = '#8fd6a8';
+  ctx.fill();
+  ctx.strokeStyle = '#5fb885';
+  ctx.lineWidth = 2;
+  roundRect(ctx, contentX, band1Y + bannerInset, contentW, bandH - bannerInset*2, 22);
+  ctx.stroke();
+
+  ctx.fillStyle = black;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const bannerText = 'إذن خروج طالب من المدرسة';
+  const bannerFit = fitFontSize(bannerText, contentW - 90, 900, 52, 24);
+  ctx.font = `900 ${bannerFit}px Cairo`;
+  ctx.fillText(bannerText, W/2, band1Y + bandH/2);
+
+  // =========================================================
+  // Quarter 2 — student name, reason, companion, companion ID (stacked)
+  // =========================================================
+  roundRect(ctx, contentX, band2Y, contentW, bandH, 20);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, contentX, band2Y, contentW, bandH, 20);
+  ctx.stroke();
+
+  const q2PadX = 56;
+  const q2InnerX = contentX + q2PadX;
+  const q2InnerRight = contentX + contentW - q2PadX;
+  const valueMaxWidth = contentW - q2PadX*2 - 20;
+
+  function stackedField(label, value, y, labelSize, valueSize, valueMin){
+    if (!value) return;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = `700 ${labelSize}px Cairo`;
+    ctx.fillStyle = labelColor;
+    ctx.fillText(label, W/2, y);
+    const fitted = fitFontSize(value, valueMaxWidth, 800, valueSize, valueMin);
+    ctx.font = `800 ${fitted}px Cairo`;
+    ctx.fillStyle = black;
+    ctx.fillText(value, W/2, y + valueSize*0.78 + 10);
+  }
+
+  stackedField('اسم الطالب', studentName, band2Y + bandH*0.13, 24, 46, 22);
+
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.moveTo(q2InnerX, band2Y + bandH*0.28);
+  ctx.lineTo(q2InnerRight, band2Y + bandH*0.28);
+  ctx.stroke();
+
+  stackedField('سبب الخروج', reason, band2Y + bandH*0.40, 21, 34, 17);
+  stackedField('مرافق الطالب', companion, band2Y + bandH*0.62, 21, 34, 17);
+  stackedField('رقم هوية المرافق', companionId, band2Y + bandH*0.84, 21, 34, 17);
+
+  // =========================================================
+  // Quarter 3 — مصدر الإذن + التوقيع (stacked)
+  // =========================================================
+  roundRect(ctx, contentX, band3Y, contentW, bandH, 20);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, contentX, band3Y, contentW, bandH, 20);
+  ctx.stroke();
+
+  // مصدر الإذن — top
+  if (source){
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = "700 22px Cairo";
+    ctx.fillStyle = labelColor;
+    ctx.fillText('مصدر الإذن', W/2, band3Y + bandH*0.14);
+    const sourceFit = fitFontSize(source, contentW - 140, 800, 38, 20);
+    ctx.font = `800 ${sourceFit}px Cairo`;
+    ctx.fillStyle = black;
+    ctx.fillText(source, W/2, band3Y + bandH*0.24);
+  }
+
+  // divider (only if both sections present)
+  if (source && signatureImg){
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(contentX + q2PadX, band3Y + bandH*0.33);
+    ctx.lineTo(contentX + contentW - q2PadX, band3Y + bandH*0.33);
+    ctx.stroke();
+  }
+
+  // التوقيع — below
+  if (signatureImg){
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = "700 22px Cairo";
+    ctx.fillStyle = labelColor;
+    ctx.fillText('التوقيع', W/2, band3Y + bandH*0.44);
+
+    const boxW = Math.min(contentW*0.76, 520);
+    const boxH = bandH*0.44;
+    const boxX = W/2 - boxW/2;
+    const boxY = band3Y + bandH*0.50;
+    roundRect(ctx, boxX, boxY, boxW, boxH, 14);
+    ctx.strokeStyle = lineColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    const imgRatio = signatureImg.width / signatureImg.height;
+    const boxRatio = boxW / boxH;
+    let drawW, drawH;
+    if (imgRatio > boxRatio){
+      drawW = boxW - 28;
+      drawH = drawW / imgRatio;
+    } else {
+      drawH = boxH - 28;
+      drawW = drawH * imgRatio;
+    }
+    const drawX = boxX + (boxW - drawW)/2;
+    const drawY = boxY + (boxH - drawH)/2;
+    ctx.drawImage(signatureImg, drawX, drawY, drawW, drawH);
+  }
+
+  // =========================================================
+  // Quarter 4 — وقت الخروج + التاريخ + اليوم + أيقونة تقويم (stacked)
+  // =========================================================
+  roundRect(ctx, contentX, band4Y, contentW, bandH, 20);
+  ctx.fillStyle = '#fafafa';
+  ctx.fill();
+  ctx.strokeStyle = lineColor;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, contentX, band4Y, contentW, bandH, 20);
+  ctx.stroke();
+
+  // improved calendar icon — centered, top of quarter 4
+  const iconSize = bandH * 0.40;
+  const iconCx = W/2;
+  const iconCy = band4Y + bandH*0.30;
+
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,.12)';
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 5;
+  roundRect(ctx, iconCx-iconSize/2, iconCy-iconSize/2, iconSize, iconSize, iconSize*0.16);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = black;
+  ctx.lineWidth = 3;
+  roundRect(ctx, iconCx-iconSize/2, iconCy-iconSize/2, iconSize, iconSize, iconSize*0.16);
+  ctx.stroke();
+
+  // header strip
+  roundRect(ctx, iconCx-iconSize/2, iconCy-iconSize/2, iconSize, iconSize*0.26, {tl:iconSize*0.16, tr:iconSize*0.16, br:0, bl:0});
+  ctx.fillStyle = black;
+  ctx.fill();
+  // rings
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath(); ctx.arc(iconCx-iconSize*0.22, iconCy-iconSize*0.5, iconSize*0.045, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(iconCx+iconSize*0.22, iconCy-iconSize*0.5, iconSize*0.045, 0, Math.PI*2); ctx.fill();
+  // little binder loops above the strip
+  ctx.strokeStyle = black;
+  ctx.lineWidth = iconSize*0.035;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(iconCx-iconSize*0.22, iconCy-iconSize*0.5-iconSize*0.10); ctx.lineTo(iconCx-iconSize*0.22, iconCy-iconSize*0.5+iconSize*0.06); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(iconCx+iconSize*0.22, iconCy-iconSize*0.5-iconSize*0.10); ctx.lineTo(iconCx+iconSize*0.22, iconCy-iconSize*0.5+iconSize*0.06); ctx.stroke();
+  // day number, bold, centered lower half
+  ctx.fillStyle = black;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const dayNum = String(new Date().getDate());
+  ctx.font = `900 ${iconSize*0.30}px Cairo`;
+  ctx.fillText(dayNum, iconCx, iconCy + iconSize*0.16);
+
+  // weekday + date/time — centered below the icon
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  const weekdayFit = fitFontSize(weekday, contentW - 100, 900, 46, 24);
+  ctx.font = `900 ${weekdayFit}px Cairo`;
+  ctx.fillStyle = black;
+  ctx.fillText(weekday, W/2, band4Y + bandH*0.70);
+
+  let subLine = dateDisplay;
+  if (timeDisplay) subLine += '   •   ' + timeDisplay;
+  const subFit = fitFontSize(subLine, contentW - 100, 700, 28, 16);
+  ctx.font = `700 ${subFit}px Cairo`;
+  ctx.fillStyle = black;
+  ctx.fillText(subLine, W/2, band4Y + bandH*0.84);
+}
+function waitForFont(){
+  if (document.fonts && document.fonts.ready){
+    return document.fonts.load('900 60px Cairo').then(()=>document.fonts.ready);
+  }
+  return Promise.resolve();
+}
+
+document.getElementById('generateBtn').addEventListener('click', render);
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  render();
+  const data = collectData();
+  const link = document.createElement('a');
+  const fileName = (data.studentName || 'مغادرة_طالب');
+  link.download = `${fileName}-اذن_خروج.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+
+['studentName','exitTime'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', render);
+});
+['reasonSelect','companionSelect','sourceSelect'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', render);
+});
+document.getElementById('companionId').addEventListener('input', render);
+
+// default exit time = now (editable afterwards)
+const timeEl = document.getElementById('exitTime');
+const now = new Date();
+timeEl.value = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+
+waitForFont().then(render);
+</script>
+</body>
+</html>
